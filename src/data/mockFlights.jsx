@@ -1,9 +1,17 @@
-const today = new Date();
-const tomorrow = new Date(today);
-const dayAfterTomorrow = new Date(today);
+const day0 = new Date(); //today
+const day1 = new Date(day0);
+const day2 = new Date(day0);
+const day3 = new Date(day0);
+const day4 = new Date(day0);
+const day5 = new Date(day0);
 
-tomorrow.setDate(today.getDate() + 1);
-dayAfterTomorrow.setDate(today.getDate() + 2);
+day1.setDate(day0.getDate() + 1);
+day2.setDate(day0.getDate() + 2);
+day3.setDate(day0.getDate() + 3);
+day4.setDate(day0.getDate() + 4);
+day5.setDate(day0.getDate() + 5);
+
+const days= [day0, day1, day2, day3, day4, day5]
 
 function formatISO(date, hour, minute) {
   const d = new Date(date);
@@ -13,31 +21,88 @@ function formatISO(date, hour, minute) {
   return d.toISOString(); // Format: 2025-07-06T04:00:00.000Z
 }
 
-const routes = [
-  { from: "DEL", to: "PNQ" },
-  { from: "DEL", to: "BOM" },
-  { from: "DEL", to: "BLR" },
-  { from: "BOM", to: "DEL" },
-  { from: "BOM", to: "PNQ" },
-  { from: "BOM", to: "BLR" },
-  { from: "PNQ", to: "DEL" },
-  { from: "PNQ", to: "BOM" },
-  { from: "PNQ", to: "BLR" },
-  { from: "BLR", to: "DEL" },
-  { from: "BLR", to: "BOM" },
-  { from: "BLR", to: "PNQ" },
+const cities = [
+  "DELHI",
+  "CHANDIGARH",
+  "MUMBAI",
+  "BENGALURU",
+  "HYDERABAD",
+  "CHENNAI",
+  "KOLKATA",
+  "AHMEDABAD",
+  "KOCHI",
+  "PUNE",
+  "GUWAHATI",
+  "GOA",
+  "AMRITSAR",
+  "SRINAGAR",
+  "JAIPUR",
+  "LUCKNOW",
+  "BHUBANESWAR",
+  "PATNA",
+  "RANCHI",
+  "DEHRADUN",
+  "VARANASI",
+  "INDORE",
+  "NAGPUR",
+  "BHOPAL",
+  "COIMBATORE",
+  "MADURAI",
+  "VISAKHAPATNAM",
+  "TIRUCHIRAPPALLI",
+  "TRIVANDRUM",
+  "PONDICHERRY",
+  "SURAT",
+  "JODHPUR",
+  "UDAIPUR",
+  "JAMMU",
+  "LEH",
+  "AGARTALA",
+  "DIMAPUR",
+  "AIZAWL",
+  "IMPHAL",
+  "SILCHAR",
+  "SHILLONG",
+  "PORT BLAIR",
+  "RAIPUR",
+  "GAYA",
+  "VADODARA",
+  "RAJKOT",
+  "JAMNAGAR",
+  "BAGDOGRA",
+  "DHARAMSHALA",
+  "KANGRA",
+  "TIRUPATI",
+  "VIJAYAWADA",
+  "HISAR"
 ];
+
+
+const routes = [];
+for (let i = 0; i < cities.length; i++) {
+  for (let j = 0; j < cities.length; j++) {
+    if (i !== j) {
+      routes.push({ from: cities[i], to: cities[j] });
+    }
+  }
+}
 
 const airlines = [
   { name: "IndiGo", prefix: "6E" },
   { name: "Air India", prefix: "AI" },
   { name: "SpiceJet", prefix: "SG" },
-];
+  { name: "Vistara", prefix: "UK" },
+  { name: "Air India Express", prefix: "IX" }
+]
+
+function getRandomPrice() {
+  return Math.floor(Math.random() * 3000) + 5000; // 3000 - 7999
+}
 
 const mockFlights = [];
 
 [routes].flat().forEach((route, rIndex) => {
-  [today, tomorrow, dayAfterTomorrow].forEach((date, dIndex) => {
+  days.forEach((date, dIndex) => {
     airlines.forEach((airline, aIndex) => {
       const depHour = 6 + (aIndex * 3); // 6:00, 9:00, 12:00
       const arrHour = depHour + 2;
@@ -55,7 +120,8 @@ const mockFlights = [];
         arrival: {
           iata: route.to,
           scheduled: formatISO(date, arrHour, 15)
-        }
+        },
+        price: getRandomPrice()
       });
     });
   });

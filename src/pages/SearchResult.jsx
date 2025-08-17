@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchFlights } from "../api/fetchFlights";
 import mockFlights from "../data/mockFlights"; 
+import bgImage from "../assets/bgplane.jpg";
 
 function SearchResult() {
   const location = useLocation();
@@ -9,7 +9,6 @@ function SearchResult() {
   const navigate = useNavigate();
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   function formatTime(dateString) {
     const date = new Date(dateString);
@@ -35,52 +34,36 @@ function SearchResult() {
           f.arrival.iata === to &&
           flightDate === selectedDate
         );
-      })
-      .map(f => ({
-        ...f,
-        price: Math.floor(Math.random() * 3000) + 3000,
-      }));
+      });
   }
 
 
   useEffect(() => {
     if (state?.from && state?.to && state?.date) {
-      async function loadFlights() {
-        try {
-          const result = await fetchFlights(state.from, state.to);
-          if (!result || result.length === 0) {
-            console.warn("Using mock data due to empty API response");
-            const fallbackFlights =  getFallbackFlights(state.from, state.to, state.date);
-            setFlights(fallbackFlights);
-          } else {
-            setFlights(result);
-          }
-        } catch (err) {
-          console.error("API error. Falling back to mock data.", err);
-          const fallbackFlights = getFallbackFlights(state.from, state.to, state.date);
-          setFlights(fallbackFlights);
-          setError(null); 
-        } finally {
-          setLoading(false);
-        }
-      }
-
-      loadFlights();
+      const fallbackFlights =  getFallbackFlights(state.from, state.to, state.date);
+      setFlights(fallbackFlights);
+      setLoading(false);
     }
   }, [state?.from, state?.to, state?.date]);
 
   if (!state?.from || !state?.to || !state?.date) {
     return (
       <section className="min-h-screen flex items-center justify-center">
-        <div className="text-center bg-white p-6 rounded shadow-md">
-          <h2 className="text-2xl font-semibold mb-4">No Search Data</h2>
-          <p>Please start your search from the home page.</p>
-          <button
-            onClick={() => navigate("/")}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
-          >
-            Go to Home
-          </button>
+        <div className="text-center relative min-h-screen flex w-full justify-center items-center">
+          <div
+                  className="absolute inset-0 bg-cover bg-center opacity-80 bg-fixed"
+                  style={{ backgroundImage: `url(${bgImage})` }}>
+          </div>
+          <div className="bg-white/60 backdrop-blur-sm text-center p-6 rounded shadow-md md:p-10">        
+            <h2 className="text-2xl font-semibold mb-4">No Search Data</h2>
+            <p>Please start your search from the home page.</p>
+            <button
+              onClick={() => navigate("/")}
+              className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            >
+              Go to Home
+            </button>
+          </div>
         </div>
       </section>
     );
@@ -92,8 +75,6 @@ function SearchResult() {
 
       {loading ? (
         <p className="text-center text-gray-600">Loading flights...</p>
-      ) : error ? (
-        <p className="text-center text-red-500">{error}</p>
       ) : flights.length === 0 ? (
         <p className="text-center text-gray-700">No flights found for your route.</p>
       ) : (
